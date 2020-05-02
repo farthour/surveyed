@@ -1,0 +1,322 @@
+.Response {
+  display: flex;
+  justify-content: center;
+}
+
+.Response_showcase {
+  display: flex;
+  justify-content: center;
+}
+
+.Response__showcase_horizontal {
+  flex-direction: row;
+}
+
+.Response__showcase_vertical {
+  flex-direction: column;
+}
+
+.SelectableResponse {
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: 4px solid transparent;
+  /* border-width: 4px;
+  border-color: transparent; */
+}
+
+.SelectableResponse:hover {
+  background-color: #fffafa;
+}
+
+.SelectableResponse_selected {
+  background-color: #fffafa;
+  border: 4px solid #e69999;
+}
+
+.SelectableResponse_not_selected {
+  background-color: #fff;
+  border: 4px solid transparent;
+}
+
+.SelectableResponse__text_wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.SelectableResponse__image_wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.SelectableResponse__image_wrapper img {
+  height: 100%;
+  width: 100%;
+}
+
+.SelectableResponse__circle {
+  border-radius: 50%;
+  text-align: center;
+}
+
+.InputBox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 3px solid #f5f1ed;
+  border-radius: 8px;
+  position: relative;
+  border-color: #e69999;
+}
+
+.InputBox:focus,
+.InputBox:active {
+  border-color: #e69999;
+}
+
+.InputResponse__input {
+  border: none;
+  width: 100%;
+}
+
+.InputResponse__input:focus,
+.InputResponse__input:active {
+  border-color: #e69999;
+}
+
+.InputResponse__submit_btn {
+  overflow: hidden;
+  background-color: #e69999;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  border: none;
+  box-sizing: border-box;
+  border-width: 3px;
+}
+.InputResponse__submit_btn:hover {
+  border: 3px solid #e69999;
+  color: #e69999;
+  background-color: #fff;
+}
+
+.InputResponse__submit_btn_with_text {
+  position: absolute;
+  bottom: -100%;
+  line-height: 1.5;
+  font-size: 1em;
+  flex: 0 0 auto;
+}
+
+.InputResponse__submit_btn_default {
+  flex: 0 0 auto;
+  height: 28px;
+  margin-right: 1em;
+  padding: 0;
+  position: relative;
+  width: 28px;
+  border-radius: 50%;
+}
+
+@media only screen and (max-width: 479.99px) {
+  .Response {
+    width: 100%;
+  }
+
+  .Response__showcase_horizontal {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .SelectableResponse {
+    margin: 10px;
+  }
+
+  .SelectableResponse__circle {
+    height: 130px;
+    width: 130px;
+    font-size: 1em;
+  }
+
+  .SelectableResponse__card_default {
+    flex-direction: row;
+    border-radius: 6px;
+    flex-basis: 100%;
+    padding: 16px;
+  }
+
+  .SelectableResponse__image_wrapper {
+    height: 100px;
+    width: 100px;
+    min-width: 100px;
+    margin-bottom: 1.2rem;
+  }
+
+  .SelectableResponse__text_wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .SelectableResponse__card_default .SelectableResponse__title {
+    font-size: 18px;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .SelectableResponse__card_default .SelectableResponse__desc {
+    font-size: 14px;
+    margin: 0.3rem 0;
+    line-height: 1.5;
+  }
+
+  .InputBox {
+    margin: 1em auto;
+    padding: 1.5em 0;
+  }
+
+  .InputResponse__input {
+    padding: 0 2rem;
+    font-size: 34px;
+  }
+
+  .InputResponse__submit_btn_with_text {
+    padding: 1em 2em;
+    border-radius: 50px;
+    max-width: 300px;
+  }
+}
+
+@media only screen and (min-width: 480px) {
+  .Response {
+    width: 100%;
+  }
+
+  .Response__showcase_horizontal {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .SelectableResponse {
+    margin: 10px;
+  }
+
+  .SelectableResponse__circle {
+    height: 145px;
+    width: 145px;
+    font-size: 1.2em;
+  }
+
+  .SelectableResponse__card_default {
+    flex-direction: column;
+    border-radius: 6px;
+    flex-basis: 256px;
+    margin: 1em;
+    padding: 2em;
+  }
+
+  .SelectableResponse__image_wrapper {
+    height: 100px;
+    width: 100px;
+    margin-bottom: 1.2rem;
+  }
+
+  .SelectableResponse__text_wrapper {
+    flex-direction: column;
+  }
+
+  .SelectableResponse__card_default .SelectableResponse__title {
+    font-size: 18px;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .SelectableResponse__card_default .SelectableResponse__desc {
+    font-size: 14px;
+    margin: 0.3rem 0;
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  .InputBox {
+    margin: 1em auto;
+    padding: 1.5em 0;
+  }
+
+  .InputResponse__input {
+    padding: 0 2rem;
+    font-size: 34px;
+  }
+
+  .InputResponse__submit_btn_with_text {
+    padding: 1em 2em;
+    border-radius: 50px;
+    max-width: 300px;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .Response__showcase_horizontal {
+    flex-direction: row;
+  }
+
+  .Response__showcase_vertical {
+    flex-direction: column;
+  }
+
+  .SelectableResponse {
+    margin: 1em;
+    padding: 2em;
+  }
+
+  .SelectableResponse__circle {
+    height: 160px;
+    width: 160px;
+    font-size: 1.2em;
+  }
+
+  .SelectableResponse__card_default {
+    flex-direction: column;
+    border-radius: 6px;
+  }
+
+  .SelectableResponse__image_wrapper {
+    height: 140px;
+    width: 140px;
+    margin-bottom: 1.5rem;
+  }
+
+  .SelectableResponse__card_default .SelectableResponse__title {
+    font-size: 24px;
+    /* margin: 1.3em 0 0.6em; */
+    text-align: center;
+  }
+
+  .SelectableResponse__card_default .SelectableResponse__desc {
+    font-size: 16px;
+    line-height: 1.5;
+    margin: 0.5em 0;
+    text-align: center;
+  }
+
+  .InputBox {
+    margin: 1em auto;
+    padding: 1.5em 0;
+  }
+
+  .InputResponse__input {
+    padding: 0 2rem;
+    font-size: 34px;
+  }
+
+  .InputResponse__submit_btn_with_text {
+    padding: 1em 2em;
+    border-radius: 50px;
+    max-width: 300px;
+  }
+}
