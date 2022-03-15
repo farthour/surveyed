@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import {v4 as uuidv4} from "uuid";
+import { v4 as uuidv4 } from "uuid";
 
 import styles from "./Surveyed.module.css";
 
@@ -14,7 +14,7 @@ import {
   ProfileResponseData,
   MappedSteps,
   QuestionResponse,
-  SurveyStepAttributes
+  SurveyStepAttributes,
 } from "./types";
 
 type Props = {
@@ -78,21 +78,21 @@ class Surveyed extends PureComponent<Props, State> {
           continue_btn_text: null,
           maximum_selections: 1,
           continue_after_delay: null,
-          responses: []
+          responses: [],
         },
         profile_responses: {},
         percent_complete: 0,
         total_steps: 0,
-        current_step: 0
+        current_step: 0,
       },
       isFirstStep: true,
       profileData: {
         profile_responses: {},
-        steps_completed: []
-      }
+        steps_completed: [],
+      },
     };
 
-    this.delay = 0
+    this.delay = 0;
 
     this.generateSurveyId = this.generateSurveyId.bind(this);
     this.generateClientId = this.generateClientId.bind(this);
@@ -105,14 +105,12 @@ class Surveyed extends PureComponent<Props, State> {
     this.initSurvey = this.initSurvey.bind(this);
     this.getFirstStepOfSurvey = this.getFirstStepOfSurvey.bind(this);
     this.goToPreviousStep = this.goToPreviousStep.bind(this);
-    this.findQuestionByQuestionIdentifier = this.findQuestionByQuestionIdentifier.bind(
-      this
-    );
+    this.findQuestionByQuestionIdentifier =
+      this.findQuestionByQuestionIdentifier.bind(this);
     this.postQuestionResponse = this.postQuestionResponse.bind(this);
     this.goToNextStep = this.goToNextStep.bind(this);
-    this.getNextQuestionIdentifierFromCurrentResponse = this.getNextQuestionIdentifierFromCurrentResponse.bind(
-      this
-    );
+    this.getNextQuestionIdentifierFromCurrentResponse =
+      this.getNextQuestionIdentifierFromCurrentResponse.bind(this);
     this.makeResponseStep = this.makeResponseStep.bind(this);
   }
 
@@ -135,14 +133,14 @@ class Surveyed extends PureComponent<Props, State> {
         if (this.state.step.is_last_step)
           this.setState({
             isLastStep: this.state.step.is_last_step,
-            isFirstStep: false
+            isFirstStep: false,
           });
         // if not last step
         else
           this.setState(
             {
               // step: this.state.step,
-              isFirstStep: false
+              isFirstStep: false,
             },
             () => {
               // if there is a delay option set in step
@@ -181,7 +179,7 @@ class Surveyed extends PureComponent<Props, State> {
           surveyId: this.props.surveyId || this.generateSurveyId(),
           clientId: this.generateClientId(),
           // @ts-ignore
-          step: this.initSurvey()
+          step: this.initSurvey(),
         },
         () => {
           this.setState({ surveyStatus: "ready" }, () => {
@@ -199,14 +197,14 @@ class Surveyed extends PureComponent<Props, State> {
     // Check if multi selection is allowed
     // if only single selection is allowed
     if (attributes.maximum_selections === 1) {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         let newState = {
           step: {
             ...prevState.step,
             profile_responses: {
-              ...prevState.step.profile_responses
-            }
-          }
+              ...prevState.step.profile_responses,
+            },
+          },
         };
 
         if (
@@ -215,9 +213,8 @@ class Surveyed extends PureComponent<Props, State> {
         )
           delete newState.step.profile_responses[attributes.identifier];
         else
-          newState.step.profile_responses[
-            attributes.identifier
-          ] = user_response;
+          newState.step.profile_responses[attributes.identifier] =
+            user_response;
 
         return newState;
       }, this.sendResponseAndContinue);
@@ -226,19 +223,21 @@ class Surveyed extends PureComponent<Props, State> {
       // then return
       if (
         this.state.step.attributes.maximum_selections ===
-        this.state.step.profile_responses[attributes.identifier]?.length &&
-        !this.state.step.profile_responses[attributes.identifier]?.includes(user_response)
+          this.state.step.profile_responses[attributes.identifier]?.length &&
+        !this.state.step.profile_responses[attributes.identifier]?.includes(
+          user_response
+        )
       )
         return;
 
-      this.setState(prevState => {
+      this.setState((prevState) => {
         let newState = {
           step: {
             ...prevState.step,
             profile_responses: {
-              ...prevState.step.profile_responses
-            }
-          }
+              ...prevState.step.profile_responses,
+            },
+          },
         };
 
         // prev responses of current step
@@ -288,7 +287,7 @@ class Surveyed extends PureComponent<Props, State> {
       surveyId: this.state.surveyId,
       clientId: this.state.clientId,
       question_identifier: attributes.identifier,
-      user_response: profile_responses[attributes.identifier] || ""
+      user_response: profile_responses[attributes.identifier] || "",
     };
 
     setTimeout(() => {
@@ -321,7 +320,7 @@ class Surveyed extends PureComponent<Props, State> {
     let { allSteps } = this.state;
 
     if (allSteps?.length) {
-      return allSteps.find(step => step.is_initial_step);
+      return allSteps.find((step) => step.is_initial_step);
     }
     return this.state.step;
   }
@@ -344,7 +343,7 @@ class Surveyed extends PureComponent<Props, State> {
   }
 
   findQuestionByQuestionIdentifier(questionIdentifier: string) {
-    return this.state.allSteps.find(v => v.identifier === questionIdentifier);
+    return this.state.allSteps.find((v) => v.identifier === questionIdentifier);
   }
 
   postQuestionResponse(response: QuestionResponse) {
@@ -360,9 +359,8 @@ class Surveyed extends PureComponent<Props, State> {
   }
 
   goToNextStep(response: QuestionResponse) {
-    let nextQuestionIdentifier = this.getNextQuestionIdentifierFromCurrentResponse(
-      response
-    );
+    let nextQuestionIdentifier =
+      this.getNextQuestionIdentifierFromCurrentResponse(response);
 
     if (!nextQuestionIdentifier) {
       // @ts-ignore
@@ -387,7 +385,7 @@ class Surveyed extends PureComponent<Props, State> {
     let { mappedSteps } = this.state;
 
     // @ts-ignore
-    let q = mappedSteps.find(v => {
+    let q = mappedSteps.find((v) => {
       if (v.question_identifier === question_identifier) {
         return v;
       }
@@ -397,7 +395,7 @@ class Surveyed extends PureComponent<Props, State> {
 
     if (q?.responses && q.responses.length) {
       // @ts-ignore
-      let a = q.responses.find(r => {
+      let a = q.responses.find((r) => {
         if (r.response_identifier === response_identifier) {
           return r.next_question_identifier;
         }
@@ -424,7 +422,7 @@ class Surveyed extends PureComponent<Props, State> {
       percent_complete: (stepsCompletedCount / totalSteps) * 100,
       total_steps: totalSteps,
       current_step: parseInt((stepsCompletedCount + 1).toString(), 10),
-      is_last_step: isLastStep
+      is_last_step: isLastStep,
     };
   }
 
@@ -451,14 +449,14 @@ class Surveyed extends PureComponent<Props, State> {
         placeholder,
         submit_btn_text,
         maximum_selections,
-        continue_btn_text
+        continue_btn_text,
       } = step.attributes;
 
       return (
         <div className={styles.Surveyed}>
           <div className={styles.Question_wrapper}>
             <Question title={title} description={description} />
-            
+
             <Response
               responses={responses}
               response_display_type={response_display_type}
