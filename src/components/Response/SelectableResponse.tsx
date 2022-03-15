@@ -29,13 +29,11 @@ const SelectableResponse: React.FC<Props> = ({
   }
 
   function getClassNameFromDisplayShape(
-    response_display_shape: "circle" | "card_default" = "circle",
+    _response_display_shape: "circle" | "card_default" = "circle",
     total_options: number
   ): string {
     let shapeCircle = styles.SelectableResponse__circle;
     let shapeCardDefault = styles.SelectableResponse__card_default;
-
-    console.log(response_display_shape);
 
     if (total_options <= 2) return shapeCircle;
     return shapeCardDefault;

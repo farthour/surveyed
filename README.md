@@ -1,8 +1,6 @@
 # surveyed
 
-> An intuitive and dope stepwise question component
-
-[![NPM](https://img.shields.io/npm/v/surveyed.svg)](https://www.npmjs.com/package/surveyed) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+> A dope stepwise question component 
 
 ## Install
 
@@ -13,18 +11,18 @@ npm install --save surveyed
 ## Usage
 
 ```tsx
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
-import MyComponent from "surveyed";
-import "surveyed/dist/index.css";
+import Surveyed from 'surveyed'
+import 'surveyed/dist/index.css'
 
 class Example extends Component {
   render() {
-    return <MyComponent />;
+    return <Surveyed />
   }
 }
 ```
 
 ## License
 
-MIT © [farthour](https://github.com/farthour)
+MIT © [amitad16](https://github.com/amitad16)

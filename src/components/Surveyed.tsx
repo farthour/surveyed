@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import uuidv4 from "uuid/v4";
+import {v4 as uuidv4} from "uuid";
 
 import styles from "./Surveyed.module.css";
 
@@ -9,16 +9,23 @@ import Response from "./Response";
 import Navigator from "./Navigator";
 
 // Types
-import { SurveyStep } from "./types";
+import {
+  SurveyStep,
+  ProfileResponseData,
+  MappedSteps,
+  QuestionResponse,
+  SurveyStepAttributes
+} from "./types";
 
 type Props = {
   surveyId?: string;
-  step: SurveyStep;
+  allSteps: SurveyStepAttributes[];
+  mappedSteps: MappedSteps[];
   onStarting: () => void;
-  onReady: (surveyCredentials: { surveyId: string; clientId: string }) => void; // Return new generated surveyId and clientId
+  onReady: () => void; // Return new generated surveyId and clientId
   onEmpty: () => void;
   onCompleted: () => void;
-  onBack: (surveyCredentials: { surveyId: string; clientId: string }) => string; // return
+  onBack: () => void; // return
   onNext: (response: {
     surveyId: string;
     clientId: string;
@@ -41,6 +48,9 @@ type State = {
   step: SurveyStep;
   isFirstStep: boolean;
   isLastStep?: boolean;
+  allSteps: SurveyStepAttributes[];
+  mappedSteps: MappedSteps[];
+  profileData: ProfileResponseData;
 };
 
 class Surveyed extends PureComponent<Props, State> {
@@ -51,6 +61,8 @@ class Surveyed extends PureComponent<Props, State> {
       surveyId: "",
       clientId: "",
       surveyStatus: "notready",
+      allSteps: this.props.allSteps || [],
+      mappedSteps: this.props.mappedSteps || [],
       step: {
         attributes: {
           id: "",
@@ -73,10 +85,14 @@ class Surveyed extends PureComponent<Props, State> {
         total_steps: 0,
         current_step: 0
       },
-      isFirstStep: true
+      isFirstStep: true,
+      profileData: {
+        profile_responses: {},
+        steps_completed: []
+      }
     };
 
-    this.delay = this.delay;
+    this.delay = 0
 
     this.generateSurveyId = this.generateSurveyId.bind(this);
     this.generateClientId = this.generateClientId.bind(this);
@@ -84,6 +100,20 @@ class Surveyed extends PureComponent<Props, State> {
     this.handleResponseClick = this.handleResponseClick.bind(this);
     this.handleBackClicked = this.handleBackClicked.bind(this);
     this.handleNextClicked = this.handleNextClicked.bind(this);
+    this.sendResponseAndContinue = this.sendResponseAndContinue.bind(this);
+
+    this.initSurvey = this.initSurvey.bind(this);
+    this.getFirstStepOfSurvey = this.getFirstStepOfSurvey.bind(this);
+    this.goToPreviousStep = this.goToPreviousStep.bind(this);
+    this.findQuestionByQuestionIdentifier = this.findQuestionByQuestionIdentifier.bind(
+      this
+    );
+    this.postQuestionResponse = this.postQuestionResponse.bind(this);
+    this.goToNextStep = this.goToNextStep.bind(this);
+    this.getNextQuestionIdentifierFromCurrentResponse = this.getNextQuestionIdentifierFromCurrentResponse.bind(
+      this
+    );
+    this.makeResponseStep = this.makeResponseStep.bind(this);
   }
 
   delay: number;
@@ -93,34 +123,36 @@ class Surveyed extends PureComponent<Props, State> {
     this.initializeSurvey();
   }
 
-  componentDidUpdate(prevProps: Props) {
-    console.log("componentDidUpdate:::", this.props, prevProps);
-
-    if (prevProps && prevProps.step) {
+  componentDidUpdate(_: Props, prevState: State) {
+    if (prevState?.step) {
+      // Check if prev question and current question are different
       if (
-        this.props.step.attributes.identifier !==
-        prevProps.step.attributes.identifier
+        this.state.step.attributes?.identifier !==
+        prevState.step.attributes?.identifier
       ) {
-        if (this.props.step.is_last_step) {
+        // if current step is last step
+        // then set state lastStep to true
+        if (this.state.step.is_last_step)
           this.setState({
-            isLastStep: this.props.step.is_last_step,
+            isLastStep: this.state.step.is_last_step,
             isFirstStep: false
           });
-        } else
+        // if not last step
+        else
           this.setState(
             {
-              step: this.props.step,
+              // step: this.state.step,
               isFirstStep: false
             },
             () => {
-              if (this.state.step.attributes.continue_after_delay) {
+              // if there is a delay option set in step
+              // then go to next step after delay
+              if (this.state.step.attributes.continue_after_delay)
                 this.delay = window.setTimeout(
-                  this.sendResponseAndContinue.bind(this),
+                  this.sendResponseAndContinue,
                   this.state.step.attributes.continue_after_delay
                 );
-              } else if (this.delay) {
-                clearTimeout(this.delay);
-              }
+              else if (this.delay) clearTimeout(this.delay);
             }
           );
       }
@@ -139,21 +171,21 @@ class Surveyed extends PureComponent<Props, State> {
     this.setState({ surveyStatus: "starting" }, () => {
       this.props.onStarting();
 
-      if (!this.props.step)
-        this.setState({ surveyStatus: "empty" }, () => this.props.onEmpty());
+      if (!this.props.allSteps)
+        return this.setState({ surveyStatus: "empty" }, () =>
+          this.props.onEmpty()
+        );
 
       this.setState(
         {
           surveyId: this.props.surveyId || this.generateSurveyId(),
           clientId: this.generateClientId(),
-          step: this.props.step
+          // @ts-ignore
+          step: this.initSurvey()
         },
         () => {
           this.setState({ surveyStatus: "ready" }, () => {
-            this.props.onReady({
-              surveyId: this.state.surveyId || this.generateSurveyId(),
-              clientId: this.state.clientId || this.generateClientId()
-            });
+            this.props.onReady();
             this.setState({ surveyStatus: "running" });
           });
         }
@@ -162,10 +194,10 @@ class Surveyed extends PureComponent<Props, State> {
   }
 
   handleResponseClick(user_response: string) {
-    console.log("response clicked:", user_response);
-
     let { attributes } = this.state.step;
 
+    // Check if multi selection is allowed
+    // if only single selection is allowed
     if (attributes.maximum_selections === 1) {
       this.setState(prevState => {
         let newState = {
@@ -190,6 +222,15 @@ class Surveyed extends PureComponent<Props, State> {
         return newState;
       }, this.sendResponseAndContinue);
     } else {
+      // if maximum selection limit is reached
+      // then return
+      if (
+        this.state.step.attributes.maximum_selections ===
+        this.state.step.profile_responses[attributes.identifier]?.length &&
+        !this.state.step.profile_responses[attributes.identifier]?.includes(user_response)
+      )
+        return;
+
       this.setState(prevState => {
         let newState = {
           step: {
@@ -200,21 +241,30 @@ class Surveyed extends PureComponent<Props, State> {
           }
         };
 
+        // prev responses of current step
         let prevResponse =
           prevState.step.profile_responses[attributes.identifier];
+
         let newResponse = [];
 
         if (prevResponse) {
+          // Check if prev response exists or already selected
+          // if selected then remove from array or unselect it
           if (prevResponse.includes(user_response)) {
             newResponse = prevResponse.filter(
               (response: string) => response !== user_response
             );
           } else {
+            // if new option selected
+            // then add to selected responses
             prevResponse.push(user_response);
             newResponse = prevResponse;
           }
         } else newResponse = [user_response];
 
+        // if all options are unselected in the current question
+        // then remove question from profile_responses
+        // or set it to initial state
         if (newResponse.length === 0)
           delete newState.step.profile_responses[attributes.identifier];
         else
@@ -241,18 +291,141 @@ class Surveyed extends PureComponent<Props, State> {
       user_response: profile_responses[attributes.identifier] || ""
     };
 
-    setTimeout(() => this.props.onNext(response), 1200);
+    setTimeout(() => {
+      let nextQuestion = this.postQuestionResponse(response);
+
+      this.setState({ step: nextQuestion }, () => this.props.onNext(response));
+    }, 1200);
   }
 
   handleBackClicked() {
-    this.props.onBack({
-      surveyId: this.state.surveyId,
-      clientId: this.state.clientId
-    });
+    let prevStep = this.goToPreviousStep();
+
+    this.setState({ step: prevStep }, () => this.props.onBack());
   }
 
   handleNextClicked() {
     this.sendResponseAndContinue();
+  }
+
+  // Helper Methods
+  initSurvey() {
+    let firstStep = this.getFirstStepOfSurvey();
+
+    // @ts-ignore
+    return this.makeResponseStep(firstStep);
+  }
+
+  // @ts-ignore
+  getFirstStepOfSurvey() {
+    let { allSteps } = this.state;
+
+    if (allSteps?.length) {
+      return allSteps.find(step => step.is_initial_step);
+    }
+    return this.state.step;
+  }
+
+  goToPreviousStep() {
+    let { profileData } = this.state;
+
+    let prevQuestionIdentifier = profileData.steps_completed.pop();
+
+    if (!prevQuestionIdentifier) return this.initSurvey();
+
+    delete profileData.profile_responses[prevQuestionIdentifier];
+
+    let question = this.findQuestionByQuestionIdentifier(
+      prevQuestionIdentifier
+    );
+
+    // @ts-ignore
+    return this.makeResponseStep(question);
+  }
+
+  findQuestionByQuestionIdentifier(questionIdentifier: string) {
+    return this.state.allSteps.find(v => v.identifier === questionIdentifier);
+  }
+
+  postQuestionResponse(response: QuestionResponse) {
+    let { question_identifier, user_response } = response;
+
+    let { profileData } = this.state;
+
+    profileData.profile_responses[question_identifier] = user_response;
+
+    profileData.steps_completed.push(question_identifier);
+
+    return this.goToNextStep(response);
+  }
+
+  goToNextStep(response: QuestionResponse) {
+    let nextQuestionIdentifier = this.getNextQuestionIdentifierFromCurrentResponse(
+      response
+    );
+
+    if (!nextQuestionIdentifier) {
+      // @ts-ignore
+      return this.makeResponseStep({ identifier: "__end__" }, true);
+    } else {
+      let question = this.findQuestionByQuestionIdentifier(
+        nextQuestionIdentifier
+      );
+
+      // @ts-ignore
+      return this.makeResponseStep(question);
+    }
+  }
+
+  getNextQuestionIdentifierFromCurrentResponse(response: QuestionResponse) {
+    let { question_identifier, user_response } = response;
+
+    let response_identifier = Array.isArray(user_response)
+      ? user_response[0]
+      : user_response;
+
+    let { mappedSteps } = this.state;
+
+    // @ts-ignore
+    let q = mappedSteps.find(v => {
+      if (v.question_identifier === question_identifier) {
+        return v;
+      }
+    });
+
+    let nextQuestionIdentifier = null;
+
+    if (q?.responses && q.responses.length) {
+      // @ts-ignore
+      let a = q.responses.find(r => {
+        if (r.response_identifier === response_identifier) {
+          return r.next_question_identifier;
+        }
+      });
+
+      if (a && a.next_question_identifier)
+        nextQuestionIdentifier = a.next_question_identifier;
+    } else {
+      nextQuestionIdentifier = q?.next_question_identifier;
+    }
+
+    return nextQuestionIdentifier;
+  }
+
+  makeResponseStep(step: SurveyStepAttributes, isLastStep?: boolean) {
+    let totalSteps = this.state.allSteps?.length;
+
+    let { profile_responses, steps_completed } = this.state.profileData;
+    let stepsCompletedCount = steps_completed?.length;
+
+    return {
+      attributes: step,
+      profile_responses: profile_responses,
+      percent_complete: (stepsCompletedCount / totalSteps) * 100,
+      total_steps: totalSteps,
+      current_step: parseInt((stepsCompletedCount + 1).toString(), 10),
+      is_last_step: isLastStep
+    };
   }
 
   render() {
@@ -285,7 +458,7 @@ class Surveyed extends PureComponent<Props, State> {
         <div className={styles.Surveyed}>
           <div className={styles.Question_wrapper}>
             <Question title={title} description={description} />
-
+            
             <Response
               responses={responses}
               response_display_type={response_display_type}

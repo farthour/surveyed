@@ -1,13 +1,27 @@
 {
   "compilerOptions": {
-    "outDir": "dist",
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
     "module": "esnext",
-    "lib": ["dom", "esnext"],
     "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "outDir": "lib",
     "jsx": "react",
     "sourceMap": true,
     "declaration": true,
-    "esModuleInterop": true,
+    "declarationMap": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noImplicitAny": true,
@@ -15,8 +29,17 @@
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "allowSyntheticDefaultImports": true
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist", "example"]
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "**/*.stories.tsx",
+    "**/*.stories.ts",
+    "**/*.stories.js",
+    "**/*.test.js",
+    "**/*.test.tsx",
+    "**/*.test.ts",
+    "./src/playground/**"
+  ]
 }
