@@ -6,6 +6,8 @@
   "license": "MIT",
   "private": false,
   "main": "lib/index.js",
+  "module": "lib/index.modern.module.js",
+  "source": "src/index.tsx",
   "homepage": "https://github.com/farthour/surveyed",
   "repository": {
     "type": "git",
@@ -43,6 +45,7 @@
     "@types/react-dom": "^17.0.13",
     "babel-loader": "^8.2.3",
     "copyfiles": "^2.4.1",
+    "microbundle-crl": "^0.13.11",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "5.0.0",
@@ -57,14 +60,14 @@
   "scripts": {
     "copy-files": "copyfiles --up 1 src/config/fonts/Montserrat/* lib/ && copyfiles --up 1 src/config/fonts/* lib/",
     "start": "react-scripts start",
-    "build": "tsc --build \"./tsconfig.json\"",
+    "build": "microbundle-crl --no-compress --css-modules true --format modern,cjs",
     "clean": "rm -rf ./lib",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "prebuild": "npm run clean && npm run copy-files",
-    "prepublish": "npm run build"
+    "prepublish": "run-s build"
   },
   "eslintConfig": {
     "extends": [
