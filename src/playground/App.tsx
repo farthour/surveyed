@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import Surveyed from "../components/Surveyed";
 
-import survey from "./data-sets/survey2/survey2-questions";
-import surveyMap from "./data-sets/survey2/survey2-questions-map";
+import surveySteps from "./data-sets/survey2/survey2-questions";
+import surveyMappedSteps from "./data-sets/survey2/survey2-questions-map";
 
 class App extends Component {
   // @ts-ignore
@@ -55,9 +55,9 @@ class App extends Component {
           onBack={this.handleOnBack}
           onNext={this.handleOnNext}
           // @ts-ignore
-          allSteps={survey.a.steps}
+          allSteps={surveySteps}
           // @ts-ignore
-          mappedSteps={surveyMap.a}
+          mappedSteps={surveyMappedSteps}
         />
       </div>
     );

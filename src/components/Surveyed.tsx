@@ -167,11 +167,11 @@ class Surveyed extends PureComponent<Props, State> {
 
   initializeSurvey() {
     this.setState({ surveyStatus: "starting" }, () => {
-      this.props.onStarting();
+      this.props.onStarting && this.props.onStarting();
 
       if (!this.props.allSteps)
         return this.setState({ surveyStatus: "empty" }, () =>
-          this.props.onEmpty()
+          this.props.onEmpty && this.props.onEmpty()
         );
 
       this.setState(
@@ -183,7 +183,7 @@ class Surveyed extends PureComponent<Props, State> {
         },
         () => {
           this.setState({ surveyStatus: "ready" }, () => {
-            this.props.onReady();
+            this.props.onReady && this.props.onReady();
             this.setState({ surveyStatus: "running" });
           });
         }
@@ -293,14 +293,14 @@ class Surveyed extends PureComponent<Props, State> {
     setTimeout(() => {
       let nextQuestion = this.postQuestionResponse(response);
 
-      this.setState({ step: nextQuestion }, () => this.props.onNext(response));
+      this.setState({ step: nextQuestion }, () => this.props.onNext && this.props.onNext(response));
     }, 1200);
   }
 
   handleBackClicked() {
     let prevStep = this.goToPreviousStep();
 
-    this.setState({ step: prevStep }, () => this.props.onBack());
+    this.setState({ step: prevStep }, () => this.props.onBack && this.props.onBack());
   }
 
   handleNextClicked() {

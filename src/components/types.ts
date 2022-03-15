@@ -15,7 +15,7 @@ export interface SurveyStepAttributes {
   response_display_shape?: "circle" | "card_default";
   response_display_style?: React.CSSProperties;
   response_interaction_format: "input" | "dropdown" | "select" | null;
-  type?: string | null;
+  type?: "text" | "email" | "password" | null;
   placeholder?: string | null;
   submit_btn_text?: string | null;
   continue_btn_text?: string | null;
