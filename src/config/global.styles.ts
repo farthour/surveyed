@@ -1,5 +1,5 @@
 // import { createGlobalStyle } from "styled-components";
-import "./fonts/styles.css";
+// import "./fonts/styles.css";
 
 // export const GlobalStyles = createGlobalStyle`
 //     * {
@@ -10,3 +10,5 @@ import "./fonts/styles.css";
 //         font-family: "Montserrat", sans-serif;
 //     }
 // `;
+
+export {}
