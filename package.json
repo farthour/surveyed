@@ -1,6 +1,6 @@
 {
   "name": "surveyed",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "A dope stepwise question component ",
   "author": "amitad16",
   "license": "MIT",
@@ -15,6 +15,12 @@
     "url": "https://github.com/farthour/surveyed/issues",
     "email": "farthour.contact@gmail.com"
   },
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
   "dependencies": {
     "@types/uuid": "^8.3.4",
     "styled-components": "^5.3.3"
@@ -54,13 +60,13 @@
   "scripts": {
     "copy-files": "copyfiles --up 1 src/config/fonts/Montserrat/* lib/ && copyfiles --up 1 src/config/fonts/* lib/",
     "start": "react-scripts start",
-    "build": "tsc",
+    "build": "tsc --build \"./tsconfig.json\"",
+    "clean": "rm -rf ./lib",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "build-lib": "rollup -c",
-    "prebuild": "rm -rf ./lib && npm run copy-files",
+    "prebuild": "npm run clean && npm run copy-files",
     "prepublish": "npm run build"
   },
   "eslintConfig": {
