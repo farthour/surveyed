@@ -1,15 +1,12 @@
 import React, { Component } from "react";
-import Surveyed from "../components/Surveyed";
+import Surveyed from "../../components/Surveyed";
 
-import surveySteps from "./data-sets/survey2/survey2-questions";
-import surveyMappedSteps from "./data-sets/survey2/survey2-questions-map";
+import surveySteps from "../data-sets/health/questions";
+import surveyMappedSteps from "../data-sets/health/questions-map";
 
-class App extends Component {
-  // @ts-ignore
-  constructor(props) {
+class DefaultSurveyed extends Component {
+  constructor(props: any) {
     super(props);
-
-    this.state = { step: null };
 
     this.handleOnStarting = this.handleOnStarting.bind(this);
     this.handleOnReady = this.handleOnReady.bind(this);
@@ -46,7 +43,6 @@ class App extends Component {
   render() {
     return (
       <div style={{ height: "100vh", width: "100vw" }}>
-        {/* Hiiii */}
         <Surveyed
           onStarting={this.handleOnStarting}
           onReady={this.handleOnReady}
@@ -64,4 +60,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default DefaultSurveyed;

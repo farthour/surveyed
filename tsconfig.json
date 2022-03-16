@@ -40,6 +40,6 @@
     "**/*.test.js",
     "**/*.test.tsx",
     "**/*.test.ts",
-    "./src/playground/**"
+    "./src/stories/**"
   ]
 }

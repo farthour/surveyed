@@ -1,4 +1,4 @@
-const surveySteps = [
+export default [
   {
     id: "q1",
     title: "My digestion is great on:",
@@ -333,5 +333,3 @@ const surveySteps = [
     redirect_url: "http://localhost:3000",
   },
 ];
-
-export default surveySteps;

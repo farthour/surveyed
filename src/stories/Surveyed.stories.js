@@ -1,10 +1,10 @@
 import React from "react";
 import { storiesOf } from "@storybook/react";
 
-import App from '../playground/App'
+import DefaultSurveyed from './examples/DefaultSurveyed'
 
 const stories = storiesOf('Surveyed', module)
 
 stories.add('Default Surveyed', () => {
-    return <App />
+    return <DefaultSurveyed />
 })
