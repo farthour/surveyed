@@ -1,4 +1,4 @@
-const surveyStepsMapping = [
+export default [
   // 1
   {
     question_identifier: "great_digestion_days",
@@ -182,5 +182,3 @@ const surveyStepsMapping = [
     next_question_identifier: null,
   },
 ];
-
-export default surveyStepsMapping;
